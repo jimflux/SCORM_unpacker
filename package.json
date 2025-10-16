@@ -1,7 +1,7 @@
 {
-  "name": "scorm-unpacker",
-  "version": "1.0.0",
-  "description": "A web app to unpack and analyze SCORM packages",
+  "name": "scorm-to-pdf-analyzer",
+  "version": "2.0.0",
+  "description": "Transform SCORM packages into beautiful PDF reports",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -11,20 +11,64 @@
     "express": "^4.18.2",
     "multer": "^1.4.5-lts.1",
     "yauzl": "^2.10.0",
-    "xmldom": "^0.6.0"
+    "xmldom": "^0.6.0",
+    "pdfkit": "^0.13.0",
+    "cheerio": "^1.0.0-rc.12"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   },
   "keywords": [
     "scorm",
-    "e-learning",
-    "zip",
-    "unpacker"
+    "elearning",
+    "pdf",
+    "analyzer",
+    "content-extraction",
+    "education"
   ],
-  "author": "Your Name",
+  "author": "SCORM Analyzer Team",
   "license": "MIT"
 }
+```
+
+### 3. **.gitignore**
+```
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime files
+uploads/
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
