@@ -18,7 +18,7 @@ const upload = multer({
 
 app.use(express.static('public'));
 
-// HTML interface
+// Clean Tilda-style interface
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -26,8 +26,8 @@ app.get('/', (req, res) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SCORM Analyzer - Transform Your eLearning Content</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <title>SCORM to PDF</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <style>
             * {
                 margin: 0;
@@ -39,285 +39,151 @@ app.get('/', (req, res) => {
                 font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
                 line-height: 1.6;
                 color: #1a1a1a;
-                background: #ffffff;
-                overflow-x: hidden;
-            }
-            
-            /* Header */
-            .header {
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(20px);
-                border-bottom: 1px solid #f0f0f0;
-                padding: 20px 0;
-                position: sticky;
-                top: 0;
-                z-index: 100;
-            }
-            
-            .nav {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 0 40px;
+                background: linear-gradient(135deg, #ff6b35 0%, #ff8f65 100%);
+                min-height: 100vh;
                 display: flex;
-                justify-content: space-between;
                 align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+            
+            .container {
+                background: white;
+                border-radius: 24px;
+                padding: 60px;
+                max-width: 600px;
+                width: 100%;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                text-align: center;
             }
             
             .logo {
-                font-size: 24px;
-                font-weight: 700;
-                color: #1a1a1a;
-                text-decoration: none;
-            }
-            
-            .logo-accent {
-                color: #6366f1;
-            }
-            
-            /* Hero Section */
-            .hero {
-                max-width: 1200px;
-                margin: 0 auto;
-                padding: 100px 40px 80px;
-                text-align: center;
-            }
-            
-            .hero h1 {
-                font-size: clamp(48px, 8vw, 72px);
-                font-weight: 700;
-                line-height: 1.1;
-                margin-bottom: 24px;
-                letter-spacing: -0.02em;
-            }
-            
-            .hero-gradient {
-                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-            }
-            
-            .hero p {
-                font-size: 20px;
-                color: #6b7280;
-                margin-bottom: 40px;
-                max-width: 600px;
-                margin-left: auto;
-                margin-right: auto;
-                font-weight: 400;
-            }
-            
-            /* Features Grid */
-            .features-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 32px;
-                margin: 60px 0;
-                max-width: 1000px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            
-            .feature-card {
-                background: #ffffff;
-                border: 1px solid #f3f4f6;
-                border-radius: 16px;
-                padding: 32px;
-                text-align: center;
-                transition: all 0.3s ease;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .feature-card:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-                border-color: #e5e7eb;
-            }
-            
-            .feature-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
-                transform: scaleX(0);
-                transition: transform 0.3s ease;
-            }
-            
-            .feature-card:hover::before {
-                transform: scaleX(1);
-            }
-            
-            .feature-icon {
                 width: 64px;
                 height: 64px;
-                background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                background: linear-gradient(135deg, #ff6b35, #ff8f65);
                 border-radius: 16px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin: 0 auto 20px;
+                margin: 0 auto 32px;
                 font-size: 28px;
                 color: white;
             }
             
-            .feature-card h3 {
-                font-size: 20px;
-                font-weight: 600;
-                margin-bottom: 12px;
-                color: #1f2937;
+            h1 {
+                font-size: 42px;
+                font-weight: 700;
+                margin-bottom: 16px;
+                color: #1a1a1a;
+                letter-spacing: -0.02em;
             }
             
-            .feature-card p {
+            .subtitle {
+                font-size: 18px;
                 color: #6b7280;
-                font-size: 16px;
+                margin-bottom: 48px;
                 line-height: 1.6;
             }
             
-            /* Upload Section */
-            .upload-section {
-                background: #f9fafb;
+            .upload-area {
                 border: 2px dashed #d1d5db;
-                border-radius: 24px;
-                padding: 60px 40px;
-                margin: 60px 0;
-                text-align: center;
+                border-radius: 16px;
+                padding: 48px 24px;
+                margin-bottom: 32px;
                 transition: all 0.3s ease;
-                position: relative;
-                overflow: hidden;
+                cursor: pointer;
+                background: #f9fafb;
             }
             
-            .upload-section:hover {
-                border-color: #6366f1;
-                background: #f8faff;
-            }
-            
-            .upload-section.dragover {
-                border-color: #6366f1;
-                background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
-                transform: scale(1.02);
+            .upload-area:hover,
+            .upload-area.dragover {
+                border-color: #ff6b35;
+                background: #fff5f0;
+                transform: translateY(-2px);
             }
             
             .upload-icon {
-                width: 80px;
-                height: 80px;
-                background: linear-gradient(135deg, #6366f1, #8b5cf6);
-                border-radius: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 24px;
-                font-size: 36px;
-                color: white;
-                animation: float 6s ease-in-out infinite;
+                font-size: 48px;
+                margin-bottom: 16px;
+                color: #9ca3af;
             }
             
-            @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-10px); }
-            }
-            
-            .upload-section h3 {
-                font-size: 24px;
+            .upload-area h3 {
+                font-size: 20px;
                 font-weight: 600;
-                margin-bottom: 12px;
-                color: #1f2937;
+                margin-bottom: 8px;
+                color: #374151;
             }
             
-            .upload-section p {
+            .upload-area p {
                 color: #6b7280;
-                font-size: 16px;
-                margin-bottom: 32px;
-            }
-            
-            .file-input-wrapper {
-                position: relative;
-                display: inline-block;
                 margin-bottom: 24px;
             }
             
             .file-input {
-                position: absolute;
-                opacity: 0;
-                width: 100%;
-                height: 100%;
-                cursor: pointer;
+                display: none;
             }
             
-            .file-input-button {
-                background: #ffffff;
-                border: 2px solid #e5e7eb;
-                color: #374151;
-                padding: 16px 32px;
+            .file-button {
+                background: #ff6b35;
+                color: white;
+                padding: 14px 28px;
+                border: none;
                 border-radius: 12px;
                 font-size: 16px;
-                font-weight: 500;
+                font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
+                display: inline-block;
             }
             
-            .file-input-button:hover {
-                border-color: #6366f1;
-                color: #6366f1;
-                background: #f8faff;
+            .file-button:hover {
+                background: #e55a2b;
+                transform: translateY(-1px);
             }
             
             .selected-file {
                 margin-top: 16px;
-                padding: 12px 20px;
+                padding: 12px 16px;
                 background: #ecfdf5;
-                border: 1px solid #d1fae5;
                 border-radius: 8px;
-                color: #065f46;
+                color: #047857;
                 font-size: 14px;
+                display: none;
             }
             
-            /* CTA Button */
-            .cta-button {
-                background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            .analyze-button {
+                background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
                 color: white;
-                padding: 18px 48px;
+                padding: 16px 32px;
                 border: none;
                 border-radius: 12px;
                 font-size: 18px;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.3s ease;
-                position: relative;
-                overflow: hidden;
-                min-width: 200px;
+                width: 100%;
+                margin-top: 24px;
             }
             
-            .cta-button:hover {
+            .analyze-button:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
             }
             
-            .cta-button:active {
-                transform: translateY(0);
-            }
-            
-            .cta-button:disabled {
+            .analyze-button:disabled {
                 opacity: 0.6;
                 cursor: not-allowed;
                 transform: none;
             }
             
-            /* Processing State */
             .processing {
                 display: none;
-                background: #ffffff;
-                border: 1px solid #e5e7eb;
-                border-radius: 16px;
-                padding: 40px;
-                margin: 40px 0;
                 text-align: center;
+                margin-top: 32px;
+                padding: 32px;
+                background: #f3f4f6;
+                border-radius: 12px;
             }
             
             .processing.show {
@@ -325,13 +191,13 @@ app.get('/', (req, res) => {
             }
             
             .spinner {
-                width: 40px;
-                height: 40px;
+                width: 32px;
+                height: 32px;
                 border: 3px solid #f3f4f6;
-                border-top: 3px solid #6366f1;
+                border-top: 3px solid #ff6b35;
                 border-radius: 50%;
                 animation: spin 1s linear infinite;
-                margin: 0 auto 20px;
+                margin: 0 auto 16px;
             }
             
             @keyframes spin {
@@ -340,176 +206,71 @@ app.get('/', (req, res) => {
             }
             
             .processing h3 {
-                font-size: 20px;
+                font-size: 18px;
                 font-weight: 600;
                 margin-bottom: 8px;
-                color: #1f2937;
+                color: #374151;
             }
             
             .processing p {
                 color: #6b7280;
-                font-size: 16px;
-            }
-            
-            /* Stats */
-            .stats {
-                display: flex;
-                justify-content: center;
-                gap: 48px;
-                margin: 60px 0;
-                flex-wrap: wrap;
-            }
-            
-            .stat {
-                text-align: center;
-            }
-            
-            .stat-number {
-                font-size: 36px;
-                font-weight: 700;
-                color: #6366f1;
-                margin-bottom: 8px;
-                display: block;
-            }
-            
-            .stat-label {
-                color: #6b7280;
                 font-size: 14px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                font-weight: 500;
             }
             
-            /* Responsive */
-            @media (max-width: 768px) {
-                .nav {
-                    padding: 0 20px;
+            @media (max-width: 640px) {
+                .container {
+                    padding: 40px 24px;
+                    margin: 20px;
                 }
                 
-                .hero {
-                    padding: 60px 20px 40px;
+                h1 {
+                    font-size: 32px;
                 }
                 
-                .features-grid {
-                    grid-template-columns: 1fr;
-                    gap: 24px;
-                    margin: 40px 20px;
+                .upload-area {
+                    padding: 32px 16px;
                 }
-                
-                .upload-section {
-                    margin: 40px 20px;
-                    padding: 40px 20px;
-                }
-                
-                .stats {
-                    gap: 32px;
-                    margin: 40px 0;
-                }
-            }
-            
-            /* Footer */
-            .footer {
-                background: #f9fafb;
-                padding: 40px 0;
-                text-align: center;
-                margin-top: 100px;
-                border-top: 1px solid #f0f0f0;
-            }
-            
-            .footer p {
-                color: #6b7280;
-                font-size: 14px;
             }
         </style>
     </head>
     <body>
-        <header class="header">
-            <nav class="nav">
-                <a href="/" class="logo">SCORM<span class="logo-accent">Analyzer</span></a>
-                <div style="color: #6b7280; font-size: 14px;">Transform your eLearning content</div>
-            </nav>
-        </header>
-        
-        <main>
-            <section class="hero">
-                <h1>Transform <span class="hero-gradient">SCORM packages</span> into beautiful PDFs</h1>
-                <p>Upload any SCORM package and get a comprehensive, professionally designed PDF report with all content, assessments, and interactive elements extracted and organized.</p>
-                
-                <div class="stats">
-                    <div class="stat">
-                        <span class="stat-number">100%</span>
-                        <span class="stat-label">Content Extraction</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">2</span>
-                        <span class="stat-label">SCORM Versions</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number">∞</span>
-                        <span class="stat-label">File Size Support</span>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3>Deep Content Analysis</h3>
-                    <p>Extracts all text, images, videos, and interactive elements from your SCORM package with pixel-perfect accuracy.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📝</div>
-                    <h3>Quiz & Assessment Export</h3>
-                    <p>Captures all questions, multiple choice answers, and assessment details in a structured, readable format.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📄</div>
-                    <h3>Professional PDF Reports</h3>
-                    <p>Generates beautiful, print-ready PDFs with proper formatting, table of contents, and embedded media.</p>
-                </div>
-            </section>
+        <div class="container">
+            <div class="logo">📚</div>
+            <h1>SCORM to PDF</h1>
+            <p class="subtitle">Transform your learning content into beautiful reports</p>
             
             <form id="uploadForm" action="/analyze" method="post" enctype="multipart/form-data">
-                <div class="upload-section" id="uploadArea">
+                <div class="upload-area" id="uploadArea">
                     <div class="upload-icon">📁</div>
-                    <h3>Choose your SCORM ZIP file</h3>
-                    <p>Supports SCORM 1.2 and SCORM 2004 packages up to 100MB</p>
-                    
-                    <div class="file-input-wrapper">
-                        <input type="file" name="scormFile" accept=".zip" required class="file-input" id="fileInput">
-                        <label for="fileInput" class="file-input-button">
-                            📎 Select File
-                        </label>
-                    </div>
-                    
-                    <div id="selectedFile" class="selected-file" style="display: none;"></div>
-                    
-                    <button type="submit" class="cta-button" id="submitBtn">
-                        ✨ Analyze & Generate PDF
-                    </button>
+                    <h3>Drop your SCORM file here</h3>
+                    <p>or click to browse</p>
+                    <input type="file" name="scormFile" accept=".zip" required class="file-input" id="fileInput">
+                    <label for="fileInput" class="file-button">Choose File</label>
+                    <div id="selectedFile" class="selected-file"></div>
                 </div>
+                
+                <button type="submit" class="analyze-button" id="analyzeBtn">
+                    Generate PDF Report
+                </button>
             </form>
             
             <div id="processing" class="processing">
                 <div class="spinner"></div>
-                <h3>Processing your SCORM package...</h3>
-                <p>Extracting content, analyzing structure, and generating your beautiful PDF report</p>
+                <h3>Processing your content...</h3>
+                <p>Extracting lessons, images, and assessments</p>
             </div>
-        </main>
-        
-        <footer class="footer">
-            <p>© 2025 SCORM Analyzer. Built with ❤️ for the eLearning community.</p>
-        </footer>
+        </div>
         
         <script>
             const uploadArea = document.getElementById('uploadArea');
             const fileInput = document.getElementById('fileInput');
             const selectedFile = document.getElementById('selectedFile');
-            const submitBtn = document.getElementById('submitBtn');
+            const analyzeBtn = document.getElementById('analyzeBtn');
             const uploadForm = document.getElementById('uploadForm');
             const processing = document.getElementById('processing');
             
-            // File drag and drop
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
             uploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 uploadArea.classList.add('dragover');
@@ -530,7 +291,6 @@ app.get('/', (req, res) => {
                 }
             });
             
-            // File input change
             fileInput.addEventListener('change', (e) => {
                 if (e.target.files.length > 0) {
                     showSelectedFile(e.target.files[0]);
@@ -540,8 +300,8 @@ app.get('/', (req, res) => {
             function showSelectedFile(file) {
                 selectedFile.textContent = \`Selected: \${file.name} (\${formatFileSize(file.size)})\`;
                 selectedFile.style.display = 'block';
-                submitBtn.style.background = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
-                submitBtn.innerHTML = '🚀 Ready to Analyze';
+                analyzeBtn.style.background = 'linear-gradient(135deg, #047857 0%, #059669 100%)';
+                analyzeBtn.textContent = 'Generate PDF Report';
             }
             
             function formatFileSize(bytes) {
@@ -552,15 +312,11 @@ app.get('/', (req, res) => {
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
             
-            // Form submission
             uploadForm.addEventListener('submit', function(e) {
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '⏳ Processing...';
+                analyzeBtn.disabled = true;
+                analyzeBtn.textContent = 'Processing...';
                 processing.classList.add('show');
                 uploadArea.style.opacity = '0.6';
-                
-                // Scroll to processing area
-                processing.scrollIntoView({ behavior: 'smooth', block: 'center' });
             });
         </script>
     </body>
@@ -595,7 +351,7 @@ function extractZip(zipPath) {
               files[entry.fileName] = {
                 buffer: buffer,
                 content: buffer.toString('utf8'),
-                isImage: /\.(jpg|jpeg|png|gif|bmp|svg)$/i.test(entry.fileName),
+                isImage: /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(entry.fileName),
                 isHTML: /\.html?$/i.test(entry.fileName),
                 isCSS: /\.css$/i.test(entry.fileName),
                 isJS: /\.js$/i.test(entry.fileName)
@@ -701,194 +457,203 @@ function parseManifest(xmlContent) {
   return manifest;
 }
 
-// Function to parse HTML content and extract everything
+// Enhanced content extraction function
 function parseHTMLContent(htmlContent, fileName, allFiles) {
   const $ = cheerio.load(htmlContent);
   const content = {
     fileName: fileName,
     title: '',
-    text: [],
-    images: [],
+    lessons: [],
     quizzes: [],
-    interactions: [],
-    links: [],
-    structure: [],
-    scripts: [],
-    styles: []
+    navigation: [],
+    images: [],
+    allText: [],
+    courseProgress: '',
+    metadata: {}
   };
   
-  // Extract title
-  content.title = $('title').text() || $('h1').first().text() || fileName;
+  // Extract title from multiple sources
+  content.title = $('title').text() || 
+                  $('.course-title, .lesson-title, h1').first().text() || 
+                  fileName;
   
-  // Extract all headings with hierarchy
-  $('h1, h2, h3, h4, h5, h6').each((i, elem) => {
-    const level = parseInt(elem.tagName.charAt(1));
-    const text = $(elem).text().trim();
-    if (text) {
-      content.structure.push({
-        type: 'heading',
-        level: level,
-        text: text
+  // Extract course progress if available
+  const progressText = $('.progress, .complete, .percentage').text();
+  if (progressText) {
+    content.courseProgress = progressText;
+  }
+  
+  // Extract navigation items
+  $('nav ul li, .nav-item, .navigation li, .menu li').each((i, elem) => {
+    const navText = $(elem).text().trim();
+    const navLink = $(elem).find('a').attr('href') || '';
+    if (navText && navText.length > 2) {
+      content.navigation.push({
+        text: navText,
+        link: navLink,
+        isActive: $(elem).hasClass('active') || $(elem).hasClass('current')
       });
     }
   });
   
-  // Extract all meaningful text content
-  $('p, div.content, .lesson-content, .text-block, li, td, th, span.text').each((i, elem) => {
-    const text = $(elem).text().trim();
-    if (text && text.length > 10 && !$(elem).closest('script, style').length) {
-      content.text.push({
-        type: 'paragraph',
-        text: text,
-        tag: elem.tagName.toLowerCase()
-      });
-    }
-  });
-  
-  // Extract images with all metadata
-  $('img').each((i, elem) => {
-    const src = $(elem).attr('src');
-    const alt = $(elem).attr('alt') || '';
-    const title = $(elem).attr('title') || '';
-    const width = $(elem).attr('width') || '';
-    const height = $(elem).attr('height') || '';
+  // Extract lesson content sections
+  $('.lesson, .content-section, .module, .slide').each((i, elem) => {
+    const lessonData = {
+      title: '',
+      content: [],
+      images: [],
+      number: i + 1
+    };
     
-    if (src) {
-      content.images.push({
-        src: src,
-        alt: alt,
-        title: title,
-        width: width,
-        height: height,
-        caption: alt || title || src
-      });
-    }
-  });
-  
-  // Extract comprehensive quiz/assessment content
-  const extractQuizContent = () => {
-    const quizzes = [];
+    // Get lesson title
+    lessonData.title = $(elem).find('h1, h2, h3, .lesson-title').first().text().trim() ||
+                      `Lesson ${i + 1}`;
     
-    // Look for form-based quizzes
-    $('form, .quiz, .question, .assessment, .test').each((i, elem) => {
-      const quizData = {
-        type: 'quiz',
-        title: $(elem).find('h1, h2, h3, .quiz-title').first().text().trim() || 'Assessment',
-        questions: []
-      };
-      
-      // Find questions in various formats
-      $(elem).find('.question, .quiz-question, fieldset').each((qIndex, qElem) => {
-        const questionText = $(qElem).find('legend, .question-text, label:first, h4, h5').first().text().trim();
-        
-        if (questionText) {
-          const question = {
-            number: qIndex + 1,
-            question: questionText,
-            type: 'multiple-choice',
-            answers: []
-          };
-          
-          // Extract answers
-          $(qElem).find('input[type="radio"], input[type="checkbox"]').each((aIndex, input) => {
-            const $input = $(input);
-            const answerText = $input.next('label').text().trim() || 
-                              $input.parent().text().replace(questionText, '').trim() ||
-                              $input.val();
-            
-            if (answerText) {
-              question.answers.push({
-                letter: String.fromCharCode(65 + aIndex),
-                text: answerText,
-                value: $input.val(),
-                type: $input.attr('type')
-              });
-            }
-          });
-          
-          // Look for select dropdowns
-          $(qElem).find('select option').each((aIndex, option) => {
-            const optionText = $(option).text().trim();
-            if (optionText && optionText !== 'Select an answer') {
-              question.answers.push({
-                letter: String.fromCharCode(65 + aIndex),
-                text: optionText,
-                value: $(option).val(),
-                type: 'select'
-              });
-            }
-          });
-          
-          if (question.answers.length > 0) {
-            quizData.questions.push(question);
-          }
-        }
-      });
-      
-      if (quizData.questions.length > 0) {
-        quizzes.push(quizData);
+    // Extract all paragraphs and text blocks in this lesson
+    $(elem).find('p, .text-block, .content-text, div').each((j, textElem) => {
+      const text = $(textElem).text().trim();
+      if (text && text.length > 20 && !$(textElem).closest('script, style, nav').length) {
+        lessonData.content.push(text);
       }
     });
     
-    return quizzes;
-  };
-  
-  content.quizzes = extractQuizContent();
-  
-  // Extract interactive elements
-  $('button, .interactive, .hotspot, .drag-drop, .clickable, input[type="button"], .btn').each((i, elem) => {
-    const text = $(elem).text().trim();
-    const type = $(elem).attr('class') || $(elem).attr('type') || 'button';
-    const onclick = $(elem).attr('onclick') || '';
+    // Extract images in this lesson
+    $(elem).find('img').each((j, imgElem) => {
+      const src = $(imgElem).attr('src');
+      const alt = $(imgElem).attr('alt') || '';
+      if (src) {
+        lessonData.images.push({
+          src: src,
+          alt: alt,
+          caption: alt
+        });
+      }
+    });
     
-    if (text) {
-      content.interactions.push({
-        type: type,
-        text: text,
-        action: onclick
-      });
+    if (lessonData.content.length > 0 || lessonData.images.length > 0) {
+      content.lessons.push(lessonData);
     }
   });
   
-  // Extract links
-  $('a[href]').each((i, elem) => {
-    const href = $(elem).attr('href');
-    const text = $(elem).text().trim();
+  // If no lessons found with specific classes, extract content differently
+  if (content.lessons.length === 0) {
+    const mainContent = {
+      title: content.title,
+      content: [],
+      images: [],
+      number: 1
+    };
     
-    if (href && text) {
-      content.links.push({
-        url: href,
-        text: text
-      });
+    // Extract all meaningful text
+    $('body').find('p, div, span, li').each((i, elem) => {
+      const text = $(elem).text().trim();
+      const tagName = elem.tagName.toLowerCase();
+      
+      // Skip scripts, styles, nav elements
+      if ($(elem).closest('script, style, nav, header, footer').length > 0) return;
+      
+      // Only include substantial text content
+      if (text && text.length > 30 && !text.includes('javascript') && !text.includes('function')) {
+        // Check if this text is not already included in a parent element
+        const parentText = $(elem).parent().text().trim();
+        if (parentText !== text && !mainContent.content.includes(text)) {
+          mainContent.content.push(text);
+        }
+      }
+    });
+    
+    // Extract all images
+    $('img').each((i, elem) => {
+      const src = $(elem).attr('src');
+      const alt = $(elem).attr('alt') || '';
+      if (src) {
+        mainContent.images.push({
+          src: src,
+          alt: alt,
+          caption: alt || `Image ${i + 1}`
+        });
+      }
+    });
+    
+    if (mainContent.content.length > 0 || mainContent.images.length > 0) {
+      content.lessons.push(mainContent);
+    }
+  }
+  
+  // Extract quiz content
+  $('form, .quiz, .question, .assessment').each((i, elem) => {
+    const quiz = {
+      title: $(elem).find('.quiz-title, h1, h2, h3').first().text().trim() || `Quiz ${i + 1}`,
+      questions: []
+    };
+    
+    $(elem).find('.question, fieldset, .quiz-question').each((j, qElem) => {
+      const questionText = $(qElem).find('legend, .question-text, label, h4, h5').first().text().trim();
+      
+      if (questionText) {
+        const question = {
+          number: j + 1,
+          text: questionText,
+          answers: []
+        };
+        
+        $(qElem).find('input[type="radio"], input[type="checkbox"]').each((k, input) => {
+          const answerText = $(input).next('label').text().trim() || 
+                            $(input).parent().text().replace(questionText, '').trim();
+          
+          if (answerText) {
+            question.answers.push({
+              letter: String.fromCharCode(65 + k),
+              text: answerText
+            });
+          }
+        });
+        
+        if (question.answers.length > 0) {
+          quiz.questions.push(question);
+        }
+      }
+    });
+    
+    if (quiz.questions.length > 0) {
+      content.quizzes.push(quiz);
     }
   });
   
-  // Extract inline scripts and styles
-  $('script').each((i, elem) => {
+  // Collect all images with their file references
+  $('img').each((i, elem) => {
     const src = $(elem).attr('src');
-    const content_script = $(elem).html();
+    const alt = $(elem).attr('alt') || '';
     
     if (src) {
-      content.scripts.push({ type: 'external', src: src });
-    } else if (content_script && content_script.trim()) {
-      content.scripts.push({ type: 'inline', content: content_script.substring(0, 200) + '...' });
+      // Try to find the actual file
+      const imagePath = Object.keys(allFiles).find(filePath => 
+        filePath.includes(src) || filePath.endsWith(src.split('/').pop())
+      );
+      
+      content.images.push({
+        src: src,
+        alt: alt,
+        caption: alt || `Image ${i + 1}`,
+        filePath: imagePath,
+        buffer: imagePath ? allFiles[imagePath]?.buffer : null
+      });
     }
   });
   
   return content;
 }
 
-// Function to generate comprehensive PDF
+// Enhanced PDF generation with embedded images
 async function generatePDF(manifest, contentData, files) {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({ 
       size: 'A4', 
       margins: { top: 50, bottom: 50, left: 50, right: 50 },
       info: {
-        Title: manifest.title || 'SCORM Course Analysis',
-        Author: 'SCORM PDF Analyzer',
-        Subject: 'SCORM Package Content Export',
-        Keywords: 'SCORM, eLearning, Content Analysis'
+        Title: manifest.title || 'SCORM Course Report',
+        Author: 'SCORM PDF Generator',
+        Subject: 'Learning Content Analysis'
       }
     });
     
@@ -899,298 +664,196 @@ async function generatePDF(manifest, contentData, files) {
       resolve(pdfData);
     });
     
-    // Helper function to add page break if needed
-    const checkPageBreak = (neededSpace = 100) => {
-      if (doc.y > doc.page.height - doc.page.margins.bottom - neededSpace) {
+    // Helper function for page breaks
+    const checkPageBreak = (space = 100) => {
+      if (doc.y > doc.page.height - doc.page.margins.bottom - space) {
         doc.addPage();
       }
     };
     
+    // Helper function to add images
+    const addImage = (imageData, maxWidth = 400, maxHeight = 300) => {
+      if (!imageData.buffer) return;
+      
+      try {
+        // Check if we have enough space for the image
+        checkPageBreak(maxHeight + 50);
+        
+        const imageOptions = {
+          fit: [maxWidth, maxHeight],
+          align: 'center'
+        };
+        
+        doc.image(imageData.buffer, doc.x, doc.y, imageOptions);
+        
+        // Add caption if available
+        if (imageData.caption) {
+          const imageHeight = doc._imageHeight || maxHeight;
+          doc.y += imageHeight + 10;
+          doc.fontSize(10).font('Helvetica-Oblique')
+             .text(imageData.caption, { align: 'center' });
+        }
+        
+        doc.moveDown(1);
+      } catch (error) {
+        // If image fails to load, just add a placeholder
+        doc.fontSize(10).font('Helvetica-Oblique')
+           .text(`[Image: ${imageData.caption || imageData.src}]`, { align: 'center' });
+        doc.moveDown(0.5);
+      }
+    };
+    
     // Title Page
-    doc.fontSize(28).font('Helvetica-Bold').text(manifest.title || 'SCORM Course Analysis', { align: 'center' });
-    doc.moveDown(1);
+    doc.fontSize(32).font('Helvetica-Bold')
+       .text(manifest.title || 'Learning Content Report', { align: 'center' });
+    
+    doc.moveDown(2);
     
     doc.fontSize(16).font('Helvetica')
-       .text('📊 Comprehensive Content Analysis Report', { align: 'center' });
+       .text('Complete Course Analysis', { align: 'center' });
     
-    doc.moveDown(3);
+    doc.moveDown(4);
+    
+    // Course summary
+    const totalLessons = contentData.reduce((sum, content) => sum + content.lessons.length, 0);
+    const totalQuizzes = contentData.reduce((sum, content) => sum + content.quizzes.length, 0);
+    const totalImages = contentData.reduce((sum, content) => sum + content.images.length, 0);
     
     doc.fontSize(14).font('Helvetica')
-       .text(`Package ID: ${manifest.identifier}`, { align: 'center' })
-       .text(`Version: ${manifest.version}`, { align: 'center' })
-       .text(`Generated: ${new Date().toLocaleString()}`, { align: 'center' })
-       .text(`Total Files: ${Object.keys(files).length}`, { align: 'center' })
-       .text(`HTML Pages: ${contentData.length}`, { align: 'center' });
+       .text(`📚 ${totalLessons} Lessons`, { align: 'center' })
+       .text(`❓ ${totalQuizzes} Quizzes`, { align: 'center' })
+       .text(`🖼️ ${totalImages} Images`, { align: 'center' })
+       .text(`📅 Generated: ${new Date().toLocaleDateString()}`, { align: 'center' });
     
-    doc.addPage();
-    
-    // Table of Contents
-    doc.fontSize(20).font('Helvetica-Bold').text('📋 Table of Contents');
-    doc.moveDown();
-    
-    const tocItems = [
-      'Course Structure',
-      'Content Analysis',
-      'Assessments & Quizzes',
-      'Interactive Elements',
-      'Media Assets',
-      'Technical Resources'
-    ];
-    
-    doc.fontSize(12).font('Helvetica');
-    tocItems.forEach((item, index) => {
-      doc.text(`${index + 1}. ${item}`, { continued: true });
-      doc.text(`${index + 3}`, { align: 'right' });
-    });
-    
-    // Course Structure
-    doc.addPage();
-    doc.fontSize(20).font('Helvetica-Bold').text('🏗️ Course Structure');
-    doc.moveDown();
-    
-    manifest.organizations.forEach(org => {
-      doc.fontSize(16).font('Helvetica-Bold').text(`📚 ${org.title}`);
-      doc.moveDown(0.5);
+    // Course Content
+    contentData.forEach((content, pageIndex) => {
+      if (content.lessons.length === 0 && content.quizzes.length === 0) return;
       
-      const renderItems = (items, indent = 0) => {
-        items.forEach(item => {
-          checkPageBreak(30);
-          const indentText = '  '.repeat(indent);
-          const bullet = indent === 0 ? '📖' : '📄';
-          doc.fontSize(11).font('Helvetica').text(`${indentText}${bullet} ${item.title}`);
-          if (item.children && item.children.length > 0) {
-            renderItems(item.children, indent + 1);
-          }
-        });
-      };
+      doc.addPage();
       
-      renderItems(org.items);
-      doc.moveDown();
-    });
-    
-    // Content Analysis
-    doc.addPage();
-    doc.fontSize(20).font('Helvetica-Bold').text('📝 Content Analysis');
-    doc.moveDown();
-    
-    contentData.forEach((content, index) => {
-      checkPageBreak(150);
+      // Page title
+      doc.fontSize(24).font('Helvetica-Bold')
+         .text(content.title, { align: 'left' });
       
-      // Page header
-      doc.fontSize(16).font('Helvetica-Bold').text(`${index + 1}. ${content.title}`);
-      doc.fontSize(10).font('Helvetica').text(`File: ${content.fileName}`, { color: 'gray' });
-      doc.moveDown();
-      
-      // Structure headings
-      if (content.structure.length > 0) {
-        doc.fontSize(12).font('Helvetica-Bold').text('📋 Content Structure:');
-        doc.moveDown(0.3);
-        
-        content.structure.forEach(item => {
-          const indent = '  '.repeat(item.level - 1);
-          const fontSize = Math.max(12 - item.level, 9);
-          doc.fontSize(fontSize).font('Helvetica').text(`${indent}• ${item.text}`);
-        });
-        doc.moveDown();
+      if (content.courseProgress) {
+        doc.fontSize(12).font('Helvetica')
+           .text(`Progress: ${content.courseProgress}`, { color: '#666666' });
       }
       
-      // Text content
-      if (content.text.length > 0) {
-        doc.fontSize(12).font('Helvetica-Bold').text('📄 Text Content:');
-        doc.moveDown(0.3);
-        
-        content.text.slice(0, 10).forEach(textItem => {
-          checkPageBreak(40);
-          const preview = textItem.text.length > 200 ? 
-                         textItem.text.substring(0, 200) + '...' : 
-                         textItem.text;
-          doc.fontSize(9).font('Helvetica').text(`• ${preview}`, { align: 'justify' });
-          doc.moveDown(0.2);
-        });
-        
-        if (content.text.length > 10) {
-          doc.fontSize(9).font('Helvetica-Oblique').text(`... and ${content.text.length - 10} more text blocks`);
-        }
-        doc.moveDown();
-      }
+      doc.moveDown(1);
       
-      // Images
-      if (content.images.length > 0) {
-        checkPageBreak(100);
-        doc.fontSize(12).font('Helvetica-Bold').text('🖼️ Images & Media:');
-        doc.moveDown(0.3);
-        
-        content.images.forEach(img => {
-          doc.fontSize(9).font('Helvetica').text(`📷 ${img.src}`);
-          if (img.caption) {
-            doc.fontSize(8).font('Helvetica-Oblique').text(`   Caption: ${img.caption}`);
-          }
-          if (img.width && img.height) {
-            doc.fontSize(8).font('Helvetica').text(`   Dimensions: ${img.width} x ${img.height}`);
-          }
-          doc.moveDown(0.2);
-        });
-        doc.moveDown();
-      }
-      
-      // Interactive elements
-      if (content.interactions.length > 0) {
-        checkPageBreak(80);
-        doc.fontSize(12).font('Helvetica-Bold').text('🔘 Interactive Elements:');
-        doc.moveDown(0.3);
-        
-        content.interactions.forEach(interaction => {
-          doc.fontSize(9).font('Helvetica').text(`• ${interaction.type}: ${interaction.text}`);
-          if (interaction.action) {
-            doc.fontSize(8).font('Helvetica-Oblique').text(`   Action: ${interaction.action.substring(0, 100)}...`);
-          }
-          doc.moveDown(0.2);
-        });
-        doc.moveDown();
-      }
-      
-      // Links
-      if (content.links.length > 0) {
-        checkPageBreak(60);
-        doc.fontSize(12).font('Helvetica-Bold').text('🔗 Links:');
-        doc.moveDown(0.3);
-        
-        content.links.forEach(link => {
-          doc.fontSize(9).font('Helvetica').text(`• ${link.text} → ${link.url}`);
-          doc.moveDown(0.2);
-        });
-        doc.moveDown();
-      }
-      
-      doc.moveDown(2);
-    });
-    
-    // Assessments & Quizzes
-    doc.addPage();
-    doc.fontSize(20).font('Helvetica-Bold').text('🎯 Assessments & Quizzes');
-    doc.moveDown();
-    
-    let totalQuestions = 0;
-    contentData.forEach((content, contentIndex) => {
-      if (content.quizzes.length > 0) {
-        checkPageBreak(100);
-        doc.fontSize(16).font('Helvetica-Bold').text(`From: ${content.title}`);
+      // Navigation menu if available
+      if (content.navigation.length > 0) {
+        doc.fontSize(16).font('Helvetica-Bold').text('📋 Course Navigation');
         doc.moveDown(0.5);
         
-        content.quizzes.forEach((quiz, quizIndex) => {
-          doc.fontSize(14).font('Helvetica-Bold').text(`📝 ${quiz.title}`);
+        content.navigation.forEach(navItem => {
+          const marker = navItem.isActive ? '▶' : '•';
+          doc.fontSize(12).font('Helvetica')
+             .text(`${marker} ${navItem.text}`);
+        });
+        
+        doc.moveDown(1);
+      }
+      
+      // Lessons
+      content.lessons.forEach((lesson, lessonIndex) => {
+        checkPageBreak(100);
+        
+        doc.fontSize(18).font('Helvetica-Bold')
+           .text(`Lesson ${lesson.number}: ${lesson.title}`);
+        doc.moveDown(0.5);
+        
+        // Lesson content
+        lesson.content.forEach(paragraph => {
+          checkPageBreak(60);
+          doc.fontSize(11).font('Helvetica')
+             .text(paragraph, { align: 'justify' });
           doc.moveDown(0.5);
-          
-          quiz.questions.forEach((question, questionIndex) => {
-            checkPageBreak(80);
-            totalQuestions++;
-            
-            doc.fontSize(12).font('Helvetica-Bold').text(`Q${questionIndex + 1}: ${question.question}`);
-            doc.moveDown(0.3);
-            
-            question.answers.forEach((answer, aIndex) => {
-              doc.fontSize(10).font('Helvetica').text(`   ${answer.letter}) ${answer.text}`);
-            });
-            doc.moveDown(0.5);
-          });
-          doc.moveDown();
+        });
+        
+        // Lesson images
+        lesson.images.forEach(image => {
+          addImage(image);
+        });
+        
+        doc.moveDown(1);
+      });
+      
+      // All page images (if not already included in lessons)
+      const unattachedImages = content.images.filter(img => 
+        !content.lessons.some(lesson => 
+          lesson.images.some(lessonImg => lessonImg.src === img.src)
+        )
+      );
+      
+      if (unattachedImages.length > 0) {
+        checkPageBreak(100);
+        doc.fontSize(16).font('Helvetica-Bold').text('📸 Additional Images');
+        doc.moveDown(0.5);
+        
+        unattachedImages.forEach(image => {
+          addImage(image);
         });
       }
-    });
-    
-    if (totalQuestions === 0) {
-      doc.fontSize(12).font('Helvetica').text('No quizzes or assessments found in this SCORM package.');
-    } else {
-      doc.fontSize(14).font('Helvetica-Bold').text(`📊 Total Questions Found: ${totalQuestions}`);
-    }
-    
-    // Interactive Elements Summary
-    doc.addPage();
-    doc.fontSize(20).font('Helvetica-Bold').text('⚡ Interactive Elements Summary');
-    doc.moveDown();
-    
-    const allInteractions = contentData.flatMap(content => content.interactions);
-    const interactionTypes = {};
-    
-    allInteractions.forEach(interaction => {
-      interactionTypes[interaction.type] = (interactionTypes[interaction.type] || 0) + 1;
-    });
-    
-    if (Object.keys(interactionTypes).length > 0) {
-      Object.entries(interactionTypes).forEach(([type, count]) => {
-        doc.fontSize(12).font('Helvetica').text(`• ${type}: ${count} instances`);
+      
+      // Quizzes
+      content.quizzes.forEach((quiz, quizIndex) => {
+        checkPageBreak(150);
+        
+        doc.fontSize(18).font('Helvetica-Bold')
+           .text(`📝 ${quiz.title}`);
+        doc.moveDown(0.5);
+        
+        quiz.questions.forEach((question, qIndex) => {
+          checkPageBreak(80);
+          
+          doc.fontSize(12).font('Helvetica-Bold')
+             .text(`Question ${question.number}: ${question.text}`);
+          doc.moveDown(0.3);
+          
+          question.answers.forEach(answer => {
+            doc.fontSize(11).font('Helvetica')
+               .text(`   ${answer.letter}) ${answer.text}`);
+          });
+          doc.moveDown(0.5);
+        });
+        
+        doc.moveDown(1);
       });
-    } else {
-      doc.fontSize(12).font('Helvetica').text('No interactive elements found in this SCORM package.');
-    }
+    });
     
-    // Media Assets Summary
+    // Technical Summary
     doc.addPage();
-    doc.fontSize(20).font('Helvetica-Bold').text('🎨 Media Assets Summary');
+    doc.fontSize(20).font('Helvetica-Bold').text('🔧 Technical Summary');
     doc.moveDown();
     
-    const mediaStats = {
+    const fileStats = {
+      html: 0,
       images: 0,
-      videos: 0,
-      audio: 0,
+      css: 0,
+      js: 0,
       other: 0
     };
     
     Object.keys(files).forEach(fileName => {
-      if (/\.(jpg|jpeg|png|gif|bmp|svg)$/i.test(fileName)) mediaStats.images++;
-      else if (/\.(mp4|avi|mov|wmv|flv)$/i.test(fileName)) mediaStats.videos++;
-      else if (/\.(mp3|wav|ogg|m4a)$/i.test(fileName)) mediaStats.audio++;
-      else if (!/\.(html|css|js|xml|txt)$/i.test(fileName)) mediaStats.other++;
+      if (files[fileName].isHTML) fileStats.html++;
+      else if (files[fileName].isImage) fileStats.images++;
+      else if (files[fileName].isCSS) fileStats.css++;
+      else if (files[fileName].isJS) fileStats.js++;
+      else fileStats.other++;
     });
     
-    doc.fontSize(14).font('Helvetica-Bold').text('📊 Media File Count:');
-    doc.moveDown(0.5);
     doc.fontSize(12).font('Helvetica')
-       .text(`🖼️ Images: ${mediaStats.images}`)
-       .text(`🎥 Videos: ${mediaStats.videos}`)
-       .text(`🔊 Audio: ${mediaStats.audio}`)
-       .text(`📎 Other Media: ${mediaStats.other}`);
-    
-    // Technical Resources
-    doc.addPage();
-    doc.fontSize(20).font('Helvetica-Bold').text('⚙️ Technical Resources');
-    doc.moveDown();
-    
-    doc.fontSize(14).font('Helvetica-Bold').text('📁 File Structure:');
-    doc.moveDown(0.5);
-    
-    const filesByType = {};
-    Object.keys(files).forEach(fileName => {
-      const ext = path.extname(fileName).toLowerCase() || 'no extension';
-      filesByType[ext] = (filesByType[ext] || 0) + 1;
-    });
-    
-    Object.entries(filesByType).forEach(([ext, count]) => {
-      doc.fontSize(10).font('Helvetica').text(`• ${ext}: ${count} files`);
-    });
-    
-    doc.moveDown();
-    
-    // Resources from manifest
-    doc.fontSize(14).font('Helvetica-Bold').text('📋 SCORM Resources:');
-    doc.moveDown(0.5);
-    
-    manifest.resources.forEach((resource, index) => {
-      checkPageBreak(60);
-      doc.fontSize(11).font('Helvetica-Bold').text(`Resource ${index + 1}: ${resource.identifier}`);
-      doc.fontSize(9).font('Helvetica')
-         .text(`  Type: ${resource.type}`)
-         .text(`  Launch File: ${resource.href}`)
-         .text(`  Files: ${resource.files.length} associated files`);
-      doc.moveDown(0.5);
-    });
-    
-    // Generation timestamp
-    doc.moveDown(2);
-    doc.fontSize(8).font('Helvetica-Oblique').text(
-      `Generated by SCORM PDF Analyzer on ${new Date().toLocaleString()}`,
-      { align: 'center', color: 'gray' }
-    );
+       .text(`📄 HTML Files: ${fileStats.html}`)
+       .text(`🖼️ Image Files: ${fileStats.images}`)
+       .text(`🎨 CSS Files: ${fileStats.css}`)
+       .text(`⚡ JavaScript Files: ${fileStats.js}`)
+       .text(`📎 Other Files: ${fileStats.other}`)
+       .moveDown()
+       .text(`📦 Total Files: ${Object.keys(files).length}`)
+       .text(`🆔 Package ID: ${manifest.identifier}`)
+       .text(`📋 SCORM Version: ${manifest.version}`);
     
     doc.end();
   });
@@ -1217,7 +880,7 @@ app.post('/analyze', upload.single('scormFile'), async (req, res) => {
     
     // Parse manifest
     const manifest = parseManifest(manifestFile.content);
-    console.log('Parsed manifest, found', manifest.organizations.length, 'organizations');
+    console.log('Parsed manifest:', manifest.title);
     
     // Process all HTML files
     const contentData = [];
@@ -1225,22 +888,25 @@ app.post('/analyze', upload.single('scormFile'), async (req, res) => {
       if (files[fileName].isHTML) {
         console.log('Processing HTML file:', fileName);
         const content = parseHTMLContent(files[fileName].content, fileName, files);
-        contentData.push(content);
+        if (content.lessons.length > 0 || content.quizzes.length > 0 || content.navigation.length > 0) {
+          contentData.push(content);
+        }
       }
     });
     
-    console.log('Processed', contentData.length, 'HTML files');
-    console.log('Found', contentData.reduce((sum, c) => sum + c.quizzes.length, 0), 'quizzes total');
+    console.log('Found content in', contentData.length, 'files');
+    console.log('Total lessons:', contentData.reduce((sum, c) => sum + c.lessons.length, 0));
+    console.log('Total quizzes:', contentData.reduce((sum, c) => sum + c.quizzes.length, 0));
     
     // Generate PDF
-    console.log('Generating PDF...');
+    console.log('Generating PDF with embedded images...');
     const pdfBuffer = await generatePDF(manifest, contentData, files);
     
     // Clean up uploaded file
     fs.unlinkSync(req.file.path);
     
     // Send PDF
-    const fileName = `${manifest.title || 'SCORM-Analysis'}-${Date.now()}.pdf`.replace(/[^a-zA-Z0-9-_]/g, '-');
+    const fileName = `${manifest.title || 'SCORM-Report'}-${Date.now()}.pdf`.replace(/[^a-zA-Z0-9-_]/g, '-');
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
@@ -1267,5 +933,5 @@ app.get('/health', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`SCORM to PDF Analyzer running on port ${port}`);
+  console.log(`SCORM to PDF Generator running on port ${port}`);
 });
